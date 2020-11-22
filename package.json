@@ -1,0 +1,17 @@
+{
+  "name": "news",
+  "version": "0.0.1",
+  "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+  "main": "index.js",
+  "dependencies": {
+    "fastify": "^3.5.1",
+    "nalapa": "^1.11.0",
+    "rss-parser": "^3.9.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Harsa Paraardhya",
+  "license": "ISC"
+}
