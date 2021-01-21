@@ -83,8 +83,8 @@ fastify.get('/', async (request, reply) => {
     rss = [
     "https://www.antaranews.com/rss/top-news",
     "https://www.antaranews.com/rss/ekonomi",
-    "http://rss.detik.com/index.php/detikcom_nasional",
-    "https://rss.detik.com/index.php/finance",
+    /* "http://rss.detik.com/index.php/detikcom_nasional",
+    "https://rss.detik.com/index.php/finance", */
     "https://www.suara.com/rss/bisnis",
     "https://www.suara.com/rss/news",
     "https://www.vice.com/id_id/rss",
@@ -93,10 +93,8 @@ fastify.get('/', async (request, reply) => {
     "https://www.cnnindonesia.com/nasional/rss",
     "https://www.cnbcindonesia.com/news/rss",
     "https://www.cnbcindonesia.com/market/rss/",
-    "https://lapi.kumparan.com/v3.0/rss/",
-    "https://mediaindonesia.com/feed",
-    "http://rss.tempo.co/nasional",
-    "http://rss.tempo.co/bisnis",
+    "https://rss.tempo.co/nasional",
+    "https://rss.tempo.co/bisnis",
     "https://www.republika.co.id/rss"
   ];
   rss.map(promise => {
@@ -138,7 +136,7 @@ fastify.get('/', async (request, reply) => {
         }
       }
     });
-  })
+  });
 
   reply
     .code(201)
