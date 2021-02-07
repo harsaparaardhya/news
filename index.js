@@ -10,50 +10,58 @@ const news = async (url) => {
   });
 
   const results = [];
-  const feed = await parser.parseURL(url);
-  feed.items.forEach(item => {
-    let image = val(item.enclosure) ? item.enclosure.url : "";
-    if (image.length == 0) {
-      const imgs = ["media:content","image","img"];
-
-      imgs.map(img => {
-        if (val(item[img])) {
-          switch (img) {
-            case "media:content":
-              image = item["media:content"]["$"].url;
-              break;
-
-            default:
-              image = item[img];
-              break;
-          }
-        }
-      });
-
+  try {
+    const feed = await parser.parseURL(url);
+    feed.items.forEach(item => {
+      let image = val(item.enclosure) ? item.enclosure.url : "";
       if (image.length == 0) {
-        let pict = item.content.split(">");
-        pict = pict[0].replace("<img " , "");
-        const imgs = pict.split(" ");
-        imgs.map(im => {
-          const img = im.split('=');
-          if (img[0] === "src")
-          image = img[1].replace(/"/g, "");
+        const imgs = ["media:content","image","img"];
+  
+        imgs.map(img => {
+          if (val(item[img])) {
+            switch (img) {
+              case "media:content":
+                image = item["media:content"]["$"].url;
+                break;
+  
+              default:
+                image = item[img];
+                break;
+            }
+          }
         });
+  
+        if (image.length == 0) {
+          let pict = item.content.split(">");
+          pict = pict[0].replace("<img " , "");
+          const imgs = pict.split(" ");
+          imgs.map(im => {
+            const img = im.split('=');
+            if (img[0] === "src")
+            image = img[1].replace(/"/g, "");
+          });
+        }
       }
-    }
-
-    const result = {
-      link: item.link.split("?")[0],
-      title: item.title.trim(),
-      content: item.contentSnippet,
-      image: image,
-      date: val(item.isoDate) ? Date.parse(item.isoDate) : Date.now(),
-      creator: val(item.creator),
-      categories: val(item.categories, [])
+  
+      const result = {
+        link: item.link.split("?")[0],
+        title: item.title.trim(),
+        content: item.contentSnippet,
+        image: image,
+        date: val(item.isoDate) ? Date.parse(item.isoDate) : Date.now(),
+        creator: val(item.creator),
+        categories: val(item.categories, [])
+      };
+  
+      results.push(result);
+    });
+  } catch (error) {
+    const message = {
+      url,
+      error
     };
-
-    results.push(result);
-  });
+    console.log(message);
+  }
 
   return results;
 };
@@ -81,21 +89,21 @@ fastify.get('/', async (request, reply) => {
     results = [] , 
     links = [],
     rss = [
-    "https://www.antaranews.com/rss/top-news",
-    "https://www.antaranews.com/rss/ekonomi",
-    /* "http://rss.detik.com/index.php/detikcom_nasional",
-    "https://rss.detik.com/index.php/finance", */
-    "https://www.suara.com/rss/bisnis",
-    "https://www.suara.com/rss/news",
-    "https://www.vice.com/id_id/rss",
-    "https://feed.liputan6.com/rss",
-    "https://www.cnnindonesia.com/ekonomi/rss",
-    "https://www.cnnindonesia.com/nasional/rss",
-    "https://www.cnbcindonesia.com/news/rss",
-    "https://www.cnbcindonesia.com/market/rss/",
-    "https://rss.tempo.co/nasional",
-    "https://rss.tempo.co/bisnis",
-    "https://www.republika.co.id/rss"
+      "https://www.antaranews.com/rss/top-news",
+      "https://www.antaranews.com/rss/ekonomi",
+      "http://rss.detik.com/index.php/detikcom_nasional",
+      "https://rss.detik.com/index.php/finance",
+      "https://www.suara.com/rss/bisnis",
+      "https://www.suara.com/rss/news",
+      "https://www.vice.com/id_id/rss",
+      "https://feed.liputan6.com/rss",
+      "https://www.cnnindonesia.com/ekonomi/rss",
+      "https://www.cnnindonesia.com/nasional/rss",
+      "https://www.cnbcindonesia.com/news/rss",
+      "https://www.cnbcindonesia.com/market/rss/",
+      "https://rss.tempo.co/nasional",
+      "https://rss.tempo.co/bisnis",
+      "https://www.republika.co.id/rss"
   ];
   rss.map(promise => {
     promises.push(news(promise));
@@ -153,11 +161,11 @@ fastify.get('/', async (request, reply) => {
 
 const start = async () => {
   try {
-    await fastify.listen(3000)
-    fastify.log.info(`server listening on ${fastify.server.address().port}`)
+    await fastify.listen(3000);
+    fastify.log.info(`server listening on ${fastify.server.address().port}`);
   } catch (err) {
-    fastify.log.error(err)
-    process.exit(1)
+    fastify.log.error(err);
+    process.exit(1);
   }
 };
 start();
